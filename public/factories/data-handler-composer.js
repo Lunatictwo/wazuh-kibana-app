@@ -16,6 +16,7 @@ const agents   = DataHandler => compose(DataHandler,'/agents');
 const logs     = DataHandler => compose(DataHandler, '/manager/logs');
 const rules    = DataHandler => compose(DataHandler, '/rules');
 const decoders = DataHandler => compose(DataHandler, '/decoders');
+const nodes    = DataHandler => compose(DataHandler, '/cluster/nodes');
 const simple   = DataHandler => new DataHandler();
 
 app
@@ -29,6 +30,7 @@ app
     .factory('RulesAutoComplete', rules)
     .factory('Decoders', decoders)
     .factory('DecodersAutoComplete', decoders)
+    .factory('ClusterNodes', nodes)
     .directive('lazyLoadData', function($compile) {
         return {
             link: (scope, el, attrs) => {
