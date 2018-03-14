@@ -88,3 +88,6 @@ require('plugins/wazuh/controllers/settings.js');
 
 // Health check
 require('plugins/wazuh/controllers/health-check.js');
+
+// Cluster
+require('plugins/wazuh/controllers/cluster.js');

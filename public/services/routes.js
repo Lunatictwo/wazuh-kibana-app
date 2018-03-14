@@ -355,6 +355,15 @@ routes
             "ips": getAllIp
         }
     })
+    .when('/cluster-monitoring', {
+        template: require('plugins/wazuh/templates/cluster/monitoring.html'),
+        resolve: {
+            "checkAPI": settingsWizard,
+            "ip": getIp,
+            "ips": getAllIp,
+            "savedSearch": getSavedSearch
+        }
+    })
     .when('/visualize/create?', {
         redirectTo: function () {},
         resolve: {

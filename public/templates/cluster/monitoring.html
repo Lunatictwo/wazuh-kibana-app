@@ -1,0 +1,111 @@
+<div flex ng-controller="clusterController" layout="column">
+
+    <div class="wz-menu-nav-bar height-70" ng-init="menuNavItem = 'cluster-monitoring'">
+        <wz-menu></wz-menu>
+    </div>
+    <div layout="row" class="md-padding wz-font-size-17 wz-margin-top-10">
+        <span flex="20" ng-if="!showConfig && !showNodes"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span>
+        <span flex="20" ng-if="showConfig && !showNodes"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / overview</span>
+        <span flex="20" ng-if="!showConfig && showNodes"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / nodes</span>
+        <span flex><i class="fa fa-circle wz-green"></i> Health is green</span>
+    </div>
+    <div layout="row" ng-if="!showConfig && !showNodes">
+        <md-card flex="50" class="wz-md-card">
+            <md-card-content>
+                <span class="wz-headline-title wz-table-hover cursor-pointer" ng-click="goConfiguration()">Overview</span>
+                <md-divider class="wz-margin-top-10"></md-divider>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="40">Version</span>
+                    <span flex class="color-grey">v3.2.1</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="40">Uptime</span>
+                    <span flex class="color-grey">3 hours</span>
+                </div>
+            </md-card-content>
+        </md-card>
+        <md-card flex="50" class="wz-md-card">
+            <md-card-content>
+                <span class="wz-headline-title wz-table-hover cursor-pointer" ng-click="goNodes()">Nodes: 12</span>
+                <md-divider class="wz-margin-top-10"></md-divider>
+                <div layout="row" class="wz-padding-top-10  wz-table-hover cursor-pointer" ng-click="goAgents()">
+                    <span flex="40">Agents</span>
+                    <span flex class="color-grey">315</span>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>  
+    <div layout="row" ng-show="showConfig || showNodes">
+        <md-card flex class="wz-metric-color wz-md-card">
+            <md-card-content layout="row" class="wz-padding-metric">
+                <div flex>Nodes: <span class="wz-font-weight-bold">12</span></div>
+                <div flex>Agents: <span class="wz-font-weight-bold">312</span></div>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div layout="row" ng-show="showConfig">
+        <md-card flex class="wz-md-card">
+            <md-card-content>
+                <span class="wz-headline-title">Overview</span>
+                <md-divider class="wz-margin-top-10"></md-divider>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Disabled</span>
+                    <span flex class="color-grey">no</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Hidden</span>
+                    <span flex class="color-grey">no</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Name</span>
+                    <span flex class="color-grey">cluster01</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Interval</span>
+                    <span flex class="color-grey">2m</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Bind address</span>
+                    <span flex class="color-grey">0.0.0.0</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Nodes</span>
+                    <span flex class="color-grey">[ 192.168.0.134 ]</span>
+                </div>
+                <div layout="row" class="wz-padding-top-10">
+                    <span flex="25">Port</span>
+                    <span flex class="color-grey">1516</span>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div layout="row" ng-show="showNodes">
+        <md-card flex class="wz-md-card">
+            <md-card-content>
+                <span class="wz-headline-title wz-table-hover cursor-pointer">Nodes</span>
+                <md-divider class="wz-margin-top-10"></md-divider>
+                <wz-table-header
+                    layout="row"
+                    data="nodes"
+                    keys="[
+                    {name:'node'},
+                    {name:'status'},
+                    {name:'url'}
+                    ]"
+                    >
+                </wz-table-header>
+                <!-- Realtime -->
+                <wz-table
+                    layout="column"
+                    flex
+                    data="nodes"
+                    keys="[{col:'node'},{col:'status'},{col:'url'}]"
+                    class="no-lateral-padding",
+                    noscroll="true"
+                    nopointer="true"
+                    noheight="true">
+                </wz-table>
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
