@@ -17,9 +17,11 @@ app.directive('wzTable',function(){
             isdecoders: '=isdecoders',
             activeitem: '=activeitem',
             isagents  : '=isagents',
-            specialfunc: '&'
+            specialfunc: '&',
+            iscluster:  '=iscluster'
         },
         link: function(scope,ele,attrs){
+            console.log(scope.data)
             scope.clickAction = (index,special) => {
                 const obj = {};
                 if(scope.full){
