@@ -15,7 +15,7 @@ app.controller('clusterController', function ($scope, $rootScope, errorHandler, 
     $rootScope.ownHandlers = [];
     $rootScope.loadedVisualizations = [];
     $rootScope.tabVisualizations = {
-        general   : 1
+        general   : 2
     };
 
     const cleanHandlers = () => {
@@ -62,7 +62,7 @@ app.controller('clusterController', function ($scope, $rootScope, errorHandler, 
     const load = async () => {
         try {
             await $scope.nodes.nextPage();
-            
+
             const data = await Promise.all([
                 apiReq.request('GET','/cluster/files',{}),
                 apiReq.request('GET','/cluster/agents',{}),
@@ -86,11 +86,12 @@ app.controller('clusterController', function ($scope, $rootScope, errorHandler, 
             
             const nodesCount = data[3]
             $scope.nodesCount = nodesCount.data.data.totalItems;
+            const connected = nodesCount.data.data.items.filter(item => item.status === 'connected');
+            $scope.nodeCoverage = (connected.length / nodesCount.data.data.totalItems) * 100;
 
             const configuration = data[4]
             $scope.configuration = configuration.data.data;
             
-
             const version = data[5]
             $scope.version = version.data.data;
 

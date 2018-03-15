@@ -1,21 +1,18 @@
-<div ng-controller="clusterController" class='uil-ring-css' ng-show="loading">
-    <div></div>
-</div>
-
-<div flex ng-controller="clusterController" ng-show="!loading" layout="column" layout-align="start space-around">
-
+<div flex ng-controller="clusterController" layout="column" layout-align="start space-around">
     <div class="wz-menu-nav-bar height-70" ng-init="menuNavItem = 'cluster-monitoring'">
         <wz-menu></wz-menu>
     </div>
-    <div layout="row" class="md-padding font-size-18 wz-margin-top-10">
+
+    <div layout="row" class="md-padding font-size-18 wz-margin-top-10" ng-if="!loading">
         <span flex="20" ng-if="!showConfig && !showNodes && !showFiles"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span>
         <span flex="20" ng-if="showConfig"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / overview</span>
         <span flex="20" ng-if="showNodes"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / nodes</span>
         <span flex="20" ng-if="showFiles"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / files</span>
-        <span flex ng-if="status === 'yes'"><i class="fa fa-circle wz-green-health"></i> Health is green</span>
+        <span flex ng-if="status === 'yes' && nodeCoverage === 100"><i class="fa fa-circle wz-green-health"></i> Health is green</span>
+        <span flex ng-if="status === 'yes' && nodeCoverage < 100"><i class="fa fa-circle wz-yellow-online"></i> Health is yellow</span>
         <span flex ng-if="status !== 'yes'"><i class="fa fa-circle wz-red-online"></i> Health is red</span>
     </div>
-    <div layout="row" ng-if="!showConfig && !showNodes && !showFiles">
+    <div layout="row" ng-if="!showConfig && !showNodes && !showFiles && !loading">
         <md-card flex="50" class="wz-md-card">
             <md-card-content>
                 <span class="wz-headline-title wz-table-hover cursor-pointer" ng-click="goConfiguration()">Overview</span>
@@ -25,8 +22,8 @@
                     <span flex class="color-grey">{{version}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="40">Uptime</span>
-                    <span flex class="color-grey">3 hours</span>
+                    <span flex="40">Online nodes</span>
+                    <span flex class="color-grey">{{nodeCoverage}}%</span>
                 </div>
             </md-card-content>
         </md-card>
@@ -48,43 +45,44 @@
     <div layout="row" ng-show="showConfig || showNodes || showFiles">
         <md-card flex class="wz-metric-color wz-md-card">
             <md-card-content layout="row" class="wz-padding-metric">
-                <div flex="15">Nodes: <span class="wz-font-weight-bold">{{nodesCount}}</span></div>
+                <div flex="10">Nodes: <span class="wz-font-weight-bold">{{nodesCount}}</span></div>
+                <div flex="15">Online nodes: <span class="wz-font-weight-bold">{{nodeCoverage}}%</span></div>
                 <div flex="15">Agents: <span class="wz-font-weight-bold">{{agentsCount}}</span></div>
                 <div flex>Files: <span class="wz-font-weight-bold">{{filesCount}}</span></div>
             </md-card-content>
         </md-card>
     </div>
     <div layout="row" ng-show="showConfig">
-        <md-card flex class="wz-md-card">
+        <md-card flex="50" class="wz-md-card">
             <md-card-content>
                 <span class="wz-headline-title">Overview</span>
                 <md-divider class="wz-margin-top-10"></md-divider>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Disabled</span>
+                    <span flex="15">Disabled</span>
                     <span flex class="color-grey">{{configuration.disabled}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Hidden</span>
+                    <span flex="15">Hidden</span>
                     <span flex class="color-grey">{{configuration.hidden}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Name</span>
+                    <span flex="15">Name</span>
                     <span flex class="color-grey">{{configuration.name}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Interval</span>
+                    <span flex="15">Interval</span>
                     <span flex class="color-grey">{{configuration.interval}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Bind address</span>
+                    <span flex="15">Bind address</span>
                     <span flex class="color-grey">{{configuration.bind_addr}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Nodes</span>
+                    <span flex="15">Nodes</span>
                     <span flex class="color-grey">{{configuration.nodes}}</span>
                 </div>
                 <div layout="row" class="wz-padding-top-10">
-                    <span flex="25">Port</span>
+                    <span flex="15">Port</span>
                     <span flex class="color-grey">{{configuration.port}}</span>
                 </div>
             </md-card-content>
@@ -112,7 +110,8 @@
                     layout="column"
                     flex
                     data="nodes"
-                    iscluster="true"
+                    iscluster="1"
+                    nopointer="1"
                     keys="[
                         {col:'node',size:25},
                         {col:'status',size:25},
@@ -135,9 +134,12 @@
     </div>
     <kbn-dis ng-show="false"></kbn-dis>
 
-    
+    <div class="wazuh-loading" layout="column" layout-aling="center center" ng-if="!showConfig && !showNodes && !showFiles" ng-show="!rendered">
+            <div class="percentage"><i class="fa fa-spinner fa-spin fa-fw" aria-hidden="true"></i></div>
+            <div class="percentage">{{loadingStatus}}</div>
+        </div>
     <div layout="row" layout-align="center stretch" class="height-400" ng-if="!showConfig && !showNodes && !showFiles">
-        
+
         <md-card flex class="wz-md-card">
             <md-card-content class="wazuh-column">
                 <span class="wz-headline-title">Master summary</span>
