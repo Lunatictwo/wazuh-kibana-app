@@ -5,9 +5,9 @@
 
     <div layout="row" class="md-padding font-size-18 wz-margin-top-10" ng-if="!loading">
         <span flex="20" ng-if="!showConfig && !showNodes && !showFiles"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span>
-        <span flex="20" ng-if="showConfig"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / overview</span>
-        <span flex="20" ng-if="showNodes"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / nodes</span>
-        <span flex="20" ng-if="showFiles"><span class="wz-table-hover cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / files</span>
+        <span flex="20" ng-if="showConfig"><span class="wz-text-link cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / overview</span>
+        <span flex="20" ng-if="showNodes"><span class="wz-text-link cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / nodes</span>
+        <span flex="20" ng-if="showFiles"><span class="wz-text-link cursor-pointer" ng-click="goBack()"><i class="fa fa-sitemap"></i> {{ currentAPI }}</span> / files</span>
         <span flex ng-if="status === 'yes' && nodeCoverage === 100"><i class="fa fa-circle wz-green-health"></i> Health is green</span>
         <span flex ng-if="status === 'yes' && nodeCoverage < 100"><i class="fa fa-circle wz-yellow-online"></i> Health is yellow</span>
         <span flex ng-if="status !== 'yes'"><i class="fa fa-circle wz-red-online"></i> Health is red</span>
@@ -15,7 +15,7 @@
     <div layout="row" ng-if="!showConfig && !showNodes && !showFiles && !loading">
         <md-card flex="50" class="wz-md-card">
             <md-card-content>
-                <span class="wz-headline-title wz-table-hover cursor-pointer" ng-click="goConfiguration()">Overview</span>
+                <span class="wz-headline-title wz-text-link cursor-pointer" ng-click="goConfiguration()">Overview</span>
                 <md-divider class="wz-margin-top-10"></md-divider>
                 <div layout="row" class="wz-padding-top-10">
                     <span flex="40">Version</span>
@@ -29,14 +29,14 @@
         </md-card>
         <md-card flex="50" class="wz-md-card">
             <md-card-content>
-                <span class="wz-headline-title wz-table-hover cursor-pointer" ng-click="goNodes()">Nodes: {{nodesCount}}</span>
+                <span class="wz-headline-title wz-text-link cursor-pointer" ng-click="goNodes()">Nodes: {{nodesCount}}</span>
                 <md-divider class="wz-margin-top-10"></md-divider>
-                <div layout="row" class="wz-padding-top-10  wz-table-hover cursor-pointer" ng-click="goAgents()">
-                    <span flex="40">Agents</span>
+                <div layout="row" class="wz-padding-top-10 cursor-pointer" ng-click="goAgents()">
+                    <span class="wz-text-link" flex="40">Agents</span>
                     <span flex class="color-grey">{{agentsCount}}</span>
                 </div>
-                <div layout="row" class="wz-padding-top-10  wz-table-hover cursor-pointer" ng-click="goFiles()">
-                    <span flex="40">Files</span>
+                <div layout="row" class="wz-padding-top-10 cursor-pointer" ng-click="goFiles()">
+                    <span class="wz-text-link" flex="40">Files</span>
                     <span flex class="color-grey">{{filesCount}}</span>
                 </div>
             </md-card-content>

@@ -309,7 +309,6 @@ routes
         resolve: {
             "checkAPI": settingsWizard,
             "ip": getIp,
-            "ips": getAllIp,
             "savedSearch": getSavedSearch
         }
     })
