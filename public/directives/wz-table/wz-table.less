@@ -89,7 +89,8 @@
 }
 
 .wz-table-height-fixed {
-    height: 220px;
+    min-height: 220px;
+    max-height: 320px;
     overflow: hidden;
 }
 
@@ -101,6 +102,12 @@
 .wz-table-card-active {
     background-color: rgb(0,121,165) !important;
     color: white !important;
+}
+
+.wz-table-agents {
+    min-height: 34px;
+    height: auto;
+    padding-top: 10px;
 }
 
 @-moz-document url-prefix() {
