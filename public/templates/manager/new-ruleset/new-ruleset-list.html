@@ -1,3 +1,20 @@
-<div flex layout-padding layout="column" layout-align="start space-around">
-    <h1>This is the list view</h1>
+<div flex layout-padding layout="column" layout-align="start space-around" ng-if="false">
+
+    <!-- Searchbar and selector row -->
+    <div layout="row" layout-align="start start">
+        <!-- Autocomplete searchbar -->
+        <!-- <md-autocomplete>
+        </md-autocomplete> -->
+        <!-- End autocomplete searchbar -->
+
+        <!-- Rules or Decoders selector -->
+        <select flex class="kuiSelect wz-border-none cursor-pointer" ng-model="ruleset-type" ng-change=""
+        aria-label="Rules or Decoders selector">
+            <option value="rules">Rules</option>
+            <option value="decoders">Decoders</option>
+        </select>
+        <!-- End Rules or Decoders selector -->
+    </div>
+    <!-- End searchbar and selector row -->
+
 </div>

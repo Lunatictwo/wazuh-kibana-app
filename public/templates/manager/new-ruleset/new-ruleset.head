@@ -1,2 +1,2 @@
-<div flex layout="column" ng-if="submenuNavItem == 'new-ruleset'>
+<div flex ng-cloak layout="column" ng-if="submenuNavItem == 'new-ruleset'">
 	<md-progress-linear class="md-accent" md-mode="indeterminate" ng-show="load"></md-progress-linear>
