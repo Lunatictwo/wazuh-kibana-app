@@ -29,17 +29,17 @@
             <md-card-content class="wazuh-column">
                 <span class="wz-headline-title">Groups</span>
                 <md-divider class="wz-margin-top-10"></md-divider>
-                <md-chips class="wz-chips wz-chips-ruleset">
-                    <md-chip class="wz-chip" tooltip="Search for rules or decoders with this group" tooltip-placement="bottom">
-                        <span>service_avaliability</span>
-                    </md-chip>
-                    <md-chip class="wz-chip" tooltip="Search for rules or decoders with this group" tooltip-placement="bottom">
-                        <span>syslog</span>
-                    </md-chip>
-                    <md-chip class="wz-chip" tooltip="Search for rules or decoders with this group" tooltip-placement="bottom">
-                        <span>postfix</span>
-                    </md-chip>
-                </md-chips>
+                <div layout="row" layout-align="start start">
+                    <md-button class="md-primary wz-text-link" tooltip="Filter by this group" tooltip-placement="bottom">
+                        service_avaliability
+                    </md-button>
+                    <md-button class="md-primary wz-text-link" tooltip="Filter by this group" tooltip-placement="bottom">
+                        syslog
+                    </md-button>
+                    <md-button class="md-primary wz-text-link" tooltip="Filter by this group" tooltip-placement="bottom">
+                        postfix
+                    </md-button>
+                </div>
             </md-card-content>
         </md-card>
         <!-- End groups section -->
