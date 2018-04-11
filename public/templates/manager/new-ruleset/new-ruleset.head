@@ -1,2 +1,4 @@
 <div flex ng-cloak layout="column" ng-if="submenuNavItem == 'new-ruleset'">
+
+	<!-- Progress bar -->
 	<md-progress-linear class="md-accent" md-mode="indeterminate" ng-show="load"></md-progress-linear>
