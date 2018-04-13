@@ -1,18 +1,27 @@
 let app = require('ui/modules').get('app/wazuh', []);
 
-app.controller('rulesController', function ($scope, $rootScope, Rules,RulesAutoComplete, errorHandler) {
-    $scope.setRulesTab = tab => $rootScope.globalsubmenuNavItem2 = tab;
-    
-    //Initialization
-    $scope.loading = true;
-    $scope.rules   = Rules;
-    $scope.rulesAutoComplete = RulesAutoComplete;
-    $scope.setRulesTab('rules');
-    $rootScope.tabVisualizations = { ruleset: 4 };
-    $scope.analizeRules = async search => {
+/**
+ * Manager/Ruleset controller declaration
+ * Receives Rules and Decoders data as parameters
+ */
+app.controller('rulesetController', function($scope, $rootScope, $sce, Rules, RulesAutoComplete, Decoders, DecodersAutoComplete, errorHandler) {
+
+    // Initialization variables
+    $scope.loading              = true;
+    $scope.rulesetType          = 'rules';
+    $scope.rules                = Rules;
+    $scope.rulesAutoComplete    = RulesAutoComplete;
+    $scope.decoders             = Decoders;
+    $scope.decodersAutoComplete = DecodersAutoComplete;
+
+    /**
+     * This function analyzes the search input in order to create filters
+     * This function works for the Rules autocomplete
+     */
+    $scope.analyzeRules = async search => {
         try {
             $scope.rulesAutoComplete.filters = [];
-    
+
             if(search.startsWith('group:') && search.split('group:')[1].trim()) {
                 await $scope.rulesAutoComplete.addFilter('group',search.split('group:')[1].trim());
             } else if(search.startsWith('level:') && search.split('level:')[1].trim()) {
@@ -24,7 +33,174 @@ app.controller('rulesController', function ($scope, $rootScope, Rules,RulesAutoC
             } else {
                 await $scope.rulesAutoComplete.addFilter('search',search);
             }
-    
+
+            if(!$scope.$$phase) $scope.$digest();
+            return $scope.rulesAutoComplete.items;
+        } catch (error){
+            errorHandler.handle(error,'Ruleset');
+            if(!$rootScope.$$phase) $rootScope.$digest();
+        }
+    }
+
+    /**
+     * This function analyzes the search input in order to create filters
+     * This function works for the Decoders autocomplete
+     */
+    $scope.analyzeDecoders = async search => {
+        try {
+            $scope.decodersAutoComplete.filters = [];
+
+            if(search.startsWith('path:') && search.split('path:')[1].trim()) {
+                await $scope.decodersAutoComplete.addFilter('path',search.split('path:')[1].trim());
+            } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
+                await $scope.decodersAutoComplete.addFilter('file',search.split('file:')[1].trim());
+            } else {
+                await $scope.decodersAutoComplete.addFilter('search',search);
+            }
+
+            if(!$scope.$$phase) $scope.$digest();
+            return $scope.decodersAutoComplete.items;
+        } catch (error){
+            errorHandler.handle(error,'Ruleset');
+            if(!$rootScope.$$phase) $rootScope.$digest();
+        }
+    }
+
+    /**
+     * This function checks the Rules searchbar when the user uses type Enter
+     */
+    $scope.checkEnterRules = search => {
+        $scope.searchTerm = '';
+        angular.element(document.querySelector('#autocomplete')).blur();
+        if(search.startsWith('group:') && search.split('group:')[1].trim()) {
+            $scope.rules.addFilter('group',search.split('group:')[1].trim());
+        } else if(search.startsWith('level:') && search.split('level:')[1].trim()) {
+            $scope.rules.addFilter('level',search.split('level:')[1].trim());
+        } else if(search.startsWith('pci:') && search.split('pci:')[1].trim()) {
+            $scope.rules.addFilter('pci',search.split('pci:')[1].trim());
+        } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
+            $scope.rules.addFilter('file',search.split('file:')[1].trim());
+        } else {
+            $scope.rules.addFilter('search',search.trim());
+        }
+    };
+
+    /**
+     * This function checks the Decoders searchbar when the user uses type Enter
+     */
+    $scope.checkEnterDecoders = search => {
+        $scope.searchTerm = '';
+        angular.element(document.querySelector('#autocomplete')).blur();
+        if(search.startsWith('path:') && search.split('path:')[1].trim()) {
+            $scope.decoders.addFilter('path',search.split('path:')[1].trim());
+        } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
+            $scope.decoders.addFilter('file',search.split('file:')[1].trim());
+        } else {
+            $scope.decoders.addFilter('search',search.trim());
+        }
+    };
+
+    /**
+     * Function to color a regex attribute
+     */
+    $scope.colorRegex = regex => {
+        regex = regex.toString();
+        let valuesArray   = regex.match(/\(((?!<\/span>).)*?\)(?!<\/span>)/gmi);
+        let coloredString = regex;
+        for (let i = 0, len = valuesArray.length; i < len; i++) {
+            coloredString = coloredString.replace(/\(((?!<\/span>).)*?\)(?!<\/span>)/mi, '<span style="color: ' + colors[i] + ' ">' + valuesArray[i] + '</span>');
+        }
+        return $sce.trustAsHtml(coloredString);
+    };
+
+    /**
+     * Function to color an order attribute
+     */
+    $scope.colorOrder = order => {
+        order = order.toString();
+        let valuesArray   = order.split(',');
+        let coloredString = order;
+        for (let i = 0, len = valuesArray.length; i < len; i++) {
+            coloredString = coloredString.replace(valuesArray[i], '<span style="color: ' + colors[i] + ' ">' + valuesArray[i] + '</span>');
+        }
+        return $sce.trustAsHtml(coloredString);
+    };
+
+    /**
+     * Async constant to load all the controller data
+     */
+    const load = async () => {
+        try {
+            await Promise.all([
+                $scope.rules.nextPage(),
+                $scope.rulesAutoComplete.nextPage(),
+                $scope.decoders.nextPage(),
+                $scope.decodersAutoComplete.nextPage()
+            ]);
+            $scope.loading = false;
+            if(!$scope.$$phase) $scope.$digest();
+            return;
+        } catch (error) {
+            errorHandler.handle('Unexpected exception loading controller','Ruleset');
+            if(!$rootScope.$$phase) $rootScope.$digest();
+        }
+    }
+
+    /**
+     * This function loads all the controller data
+     * Calls the content from the 'load' constant
+     */
+    load();
+
+    /**
+     * This is the function for $destroy event
+     */
+    $scope.$on('$destroy', () => {
+        // Reset Rules and Decoders data
+        $scope.rules.reset();
+        $scope.decoders.reset();
+
+        // Destroy handlers
+        if($rootScope.ownHandlers){
+            for(let h of $rootScope.ownHandlers){
+                h._scope.$destroy();
+            }
+        }
+
+        // Reset handlers
+        $rootScope.ownHandlers = [];
+    });
+});
+
+//////////////////////////////////////////
+// LEGACY CONTROLLERS (WILL BE REMOVED) //
+//////////////////////////////////////////
+
+app.controller('rulesController', function ($scope, $rootScope, Rules,RulesAutoComplete, errorHandler) {
+    $scope.setRulesTab = tab => $rootScope.globalsubmenuNavItem2 = tab;
+
+    //Initialization
+    $scope.loading = true;
+    $scope.rules   = Rules;
+    $scope.rulesAutoComplete = RulesAutoComplete;
+    $scope.setRulesTab('rules');
+    $rootScope.tabVisualizations = { ruleset: 4 };
+    $scope.analizeRules = async search => {
+        try {
+            $scope.rulesAutoComplete.filters = [];
+
+            if(search.startsWith('group:') && search.split('group:')[1].trim()) {
+                await $scope.rulesAutoComplete.addFilter('group',search.split('group:')[1].trim());
+            } else if(search.startsWith('level:') && search.split('level:')[1].trim()) {
+                await $scope.rulesAutoComplete.addFilter('level',search.split('level:')[1].trim());
+            } else if(search.startsWith('pci:') && search.split('pci:')[1].trim()) {
+                await $scope.rulesAutoComplete.addFilter('pci',search.split('pci:')[1].trim());
+            } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
+                await $scope.rulesAutoComplete.addFilter('file',search.split('file:')[1].trim());
+            } else {
+                await $scope.rulesAutoComplete.addFilter('search',search);
+            }
+
             if(!$scope.$$phase) $scope.$digest();
             return $scope.rulesAutoComplete.items;
         } catch (error){
@@ -96,7 +272,7 @@ app.controller('rulesController', function ($scope, $rootScope, Rules,RulesAutoC
 
 app.controller('decodersController', function ($scope, $rootScope, $sce, Decoders,DecodersAutoComplete, errorHandler) {
     $scope.setRulesTab = tab => $rootScope.globalsubmenuNavItem2 = tab;
-    
+
     //Initialization
     $scope.loading  = true;
     $scope.decoders = Decoders;
@@ -164,7 +340,7 @@ app.controller('decodersController', function ($scope, $rootScope, $sce, Decoder
     $scope.analizeDecoders = async search => {
         try {
             $scope.decodersAutoComplete.filters = [];
-    
+
             if(search.startsWith('path:') && search.split('path:')[1].trim()) {
                 await $scope.decodersAutoComplete.addFilter('path',search.split('path:')[1].trim());
             } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
@@ -172,7 +348,7 @@ app.controller('decodersController', function ($scope, $rootScope, $sce, Decoder
             } else {
                 await $scope.decodersAutoComplete.addFilter('search',search);
             }
-    
+
             if(!$scope.$$phase) $scope.$digest();
             return $scope.decodersAutoComplete.items;
         } catch (error){

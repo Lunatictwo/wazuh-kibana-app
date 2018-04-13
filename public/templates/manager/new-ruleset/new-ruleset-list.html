@@ -1,9 +1,9 @@
-<md-content flex layout="column" layout-align="start space-around" ng-if="false">
+<md-content flex layout="column" layout-padding layout-align="start stretch" ng-controller="rulesetController">
 
     <!-- Searchbar and selector row -->
     <div layout="row" layout-align="start start">
-        <!-- Autocomplete searchbar -->
-        <span layout="row" flex layout-align="space-between center">
+        <!-- Rules autocomplete searchbar -->
+        <span layout="row" flex layout-align="space-between center" ng-show="rulesetType === 'rules'">
             <md-autocomplete flex
             class="wz-autocomplete wz-margin-right-15"
             md-input-id="autocomplete"
@@ -12,35 +12,69 @@
             md-selected-item="filter"
             md-selected-item-change="rules.addFilter('search', filter.description)"
             md-search-text="searchTerm"
-            md-items="rule in analizeRules(searchTerm)"
+            md-items="rule in analyzeRules(searchTerm)"
             md-item-text="rule.file + ' - ' + rule.description"
             md-min-length="0"
             md-no-asterisk="false"
             md-menu-class="autocomplete-custom-agents-bar"
-            md-search-text-change="analizeRules(searchTerm)"
-            placeholder="Search..."
+            md-search-text-change="analyzeRules(searchTerm)"
+            placeholder="Search for rules..."
             lazy-load-data="rulesAutoComplete.nextPage()"
             md-autofocus=""
-            wz-enter="checkEnter(searchTerm)">
-                <md-item-template>
-                    <span>
-                        <strong md-highlight-text="search" md-highlight-flags="i"> {{rule.file}} - {{rule.description}} </strong>
-                    </span>
-                    <span>
-                        <span ng-if="rule.type != 'pci'"> {{rule.type}} </span>
-                        <span ng-if="rule.type == 'pci'">PCI control</span>
-                    </span>
-                </md-item-template>
-                <md-not-found>
-                    No results matching "{{searchTerm}}" were found.
-                </md-not-found>
+            wz-enter="checkEnterRules(searchTerm)">
+            <md-item-template>
+                <span>
+                    <strong md-highlight-text="search" md-highlight-flags="i"> {{rule.file}} - {{rule.description}} </strong>
+                </span>
+                <span>
+                    <span ng-if="rule.type != 'pci'"> {{rule.type}} </span>
+                    <span ng-if="rule.type == 'pci'">PCI control</span>
+                </span>
+            </md-item-template>
+            <md-not-found>
+                No results matching "{{searchTerm}}" were found.
+            </md-not-found>
             </md-autocomplete>
         </span>
-        <!-- End autocomplete searchbar -->
+        <!-- End Rules autocomplete searchbar -->
+
+        <!-- Decoders autocomplete searchbar -->
+        <span layout="row" flex layout-align="space-between center" ng-show="rulesetType === 'decoders'">
+            <md-autocomplete flex
+            class="wz-autocomplete wz-margin-right-15"
+            md-input-id="autocomplete"
+            md-select-on-match="true"
+            md-no-cache="noCache"
+            md-selected-item="filter"
+            md-selected-item-change="decoders.addFilter('search', filter.name)"
+            md-search-text="searchTerm"
+            md-items="decoder in analyzeDecoders(searchTerm)"
+            md-item-text="decoder.name +' '+ decoder.file"
+            md-min-length="0"
+            md-no-asterisk="false"
+            md-menu-class="autocomplete-custom-agents-bar"
+            md-search-text-change="analyzeDecoders(searchTerm)"
+            placeholder="Search for decoders..."
+            lazy-load-data="decodersAutoComplete.nextPage()"
+            md-autofocus="" wz-enter="checkEnterDecoders(searchTerm)">
+            <md-item-template>
+                <span>
+                    <span>
+                        <strong md-highlight-text="search" md-highlight-flags="i"> {{decoder.file}} - {{decoder.name}} </strong>
+                    </span>
+                </span>
+                <span>
+                    <span> {{decoder.type}} </span>
+                </span>
+            </md-item-template>
+            <md-not-found> No results matching "{{searchTerm}}" were found. </md-not-found>
+            </md-autocomplete>
+        </span>
+        <!-- End Decoders autocomplete searchbar -->
 
         <!-- Rules or Decoders selector -->
         <div flex="20" layout="column" class="height-41 wz-select-input">
-            <select flex class="kuiSelect wz-border-none cursor-pointer" ng-value="ruleset_type = 'rules'"
+            <select flex class="kuiSelect wz-border-none cursor-pointer" ng-model="rulesetType"
             aria-label="Rules or Decoders selector" placeholder="Rules or Decoders">
                 <option value="rules">Rules</option>
                 <option value="decoders">Decoders</option>
@@ -49,5 +83,82 @@
         <!-- End Rules or Decoders selector -->
     </div>
     <!-- End searchbar and selector row -->
+
+    <!-- Rules or Decoders table section -->
+    <div flex layout="column">
+        <!-- Header for Rules -->
+        <wz-table-header
+            ng-show="rulesetType === 'rules'"
+            layout="row"
+            data="rules"
+            keys="[
+                {name:'ID',sortValue:'id',size:5},
+                {name:'File',sortValue:'file',size:15},
+                {name:'Description',sortValue:'description',size:35},
+                {name:'Groups',size:25},
+                {name:'Requirement',size:15},
+                {name:'Level',sortValue:'level',size:5}
+            ]">
+        </wz-table-header>
+        <!-- End header for Rules -->
+
+        <!-- Table for Rules -->
+        <wz-table
+            ng-show="rulesetType === 'rules'"
+            layout="column"
+            flex
+            func="closeOther(rule)"
+            data="rules"
+            full="'rule'"
+            activeitem="activeItem"
+            keys="[
+                {col:'id',size:5},
+                {col:'file',size:15},
+                {col:'description',size:35},
+                {col:'groups',size:25},
+                {col:'pci',size:15},
+                {col:'level',size:5}
+            ]"
+            isruleset="true"
+            class="no-lateral-padding">
+        </wz-table>
+        <!-- End table for Rules -->
+
+        <!-- Header for Decoders -->
+        <wz-table-header
+            ng-show="rulesetType === 'decoders'"
+            layout="row"
+            data="decoders"
+            keys="[
+                {name:'Name',sortValue:'name',size:20},
+                {name:'Program name',size:20},
+                {name:'Fields',size:40},
+                {name:'File',sortValue:'file',size:20}
+            ]">
+        </wz-table-header>
+        <!-- End header for Decoders -->
+
+        <!-- Table for Decoders -->
+        <wz-table
+            ng-show="rulesetType === 'decoders'"
+            layout="column"
+            flex
+            func="closeOther(decoder.name+decoder.file+decoder.position)"
+            data="decoders"
+            full="'decoder'"
+            activeitem="activeItem"
+            keys="[
+                {col:'name',size:20},
+                {col:'details.program_name',size:20},
+                {col:'details.order',size:40},
+                {col:'file',size:20}
+            ]"
+            isdecoders="true"
+            class="no-lateral-padding">
+        </wz-table>
+        <!-- End table for Decoders -->
+
+    </div>
+    <!-- End Rules or Decoders table section -->
 
 </md-content>
