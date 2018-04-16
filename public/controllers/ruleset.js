@@ -101,6 +101,16 @@ app.controller('rulesetController', function($scope, $rootScope, $sce, Rules, Ru
     };
 
     /**
+     * This function changes properly between rules and decoders, removing the
+     * previous filters
+     */
+    $scope.changeRulesetType = () => {
+        // Call the removeAllFilters method to remove all the applied filters
+        $scope.rules.removeAllFilters();
+        $scope.decoders.removeAllFilters();
+    }
+
+    /**
      * Function to color a regex attribute
      */
     $scope.colorRegex = regex => {

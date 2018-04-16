@@ -63,7 +63,7 @@ app.factory('DataHandler', function ($q, apiReq,errorHandler) {
                     this.items[i].selected = false;
                 }
                 this.offset += items.length;
-                if (this.offset >= this.totalItems) this.end = true; 
+                if (this.offset >= this.totalItems) this.end = true;
                 if (data.data.data !== 0){
                     this.busy = false;
                     if(this.path === '/agents/groups'){
@@ -84,7 +84,7 @@ app.factory('DataHandler', function ($q, apiReq,errorHandler) {
 
         getFilter (filterName) {
             let filtered = this.filters.filter(element => element.name === filterName);
-            return (filtered.length !== 0) ? filtered[0].value : null;           
+            return (filtered.length !== 0) ? filtered[0].value : null;
         }
 
         hasFilter (filterName) {
@@ -113,9 +113,15 @@ app.factory('DataHandler', function ($q, apiReq,errorHandler) {
         removeFilter (filterName, search) {
             if(search) this.filters = this.filters.filter(filter => filterName !== filter.name && filter.value !== search);
             else       this.filters = this.filters.filter(filter => filterName !== filter.name);
-            
+
             if (search) this.search();
 
+        }
+
+        removeAllFilters () {
+            for(let filter of this.filters){
+                this.removeFilter(filter.name, true);
+            }
         }
 
         delete (name, index) {
