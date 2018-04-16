@@ -1,4 +1,4 @@
-<md-content flex layout="column" layout-align="start stretch" ng-if="false">
+<md-content flex layout="column" layout-align="start stretch" ng-if="viewingDetail">
 
     <!-- Loading ring -->
     <div class='uil-ring-css' ng-show="loading">
@@ -8,7 +8,7 @@
     <!-- Back button and title -->
     <div ng-show="!loading" layout="row" layout-align="start center">
         <!-- Back button -->
-        <md-button class="md-icon-button" aria-label="Back to Ruleset list" tooltip="Back" tooltip-placement="bottom"><i class="fa fa-fw fa-arrow-left" aria-hidden="true"></i></md-button>
+        <md-button class="md-icon-button" aria-label="Back to Ruleset list" tooltip="Back" tooltip-placement="bottom" ng-click="backToRulesetList()"><i class="fa fa-fw fa-arrow-left" aria-hidden="true"></i></md-button>
         <!-- Rule/Decoder title -->
         <h1 class="md-headline">Postfix process error.</h1>
     </div>

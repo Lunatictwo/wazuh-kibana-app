@@ -141,6 +141,7 @@ app.controller('rulesetController', function($scope, $rootScope, $sce, Rules, Ru
      */
     const load = async () => {
         try {
+            $scope.loading = true;
             await Promise.all([
                 $scope.rules.nextPage(),
                 $scope.rulesAutoComplete.nextPage(),
