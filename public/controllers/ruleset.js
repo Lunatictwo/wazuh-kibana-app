@@ -71,7 +71,7 @@ app.controller('rulesetController', function($scope, $rootScope, $sce, Rules, Ru
      */
     $scope.checkEnterRules = search => {
         $scope.searchTerm = '';
-        angular.element(document.querySelector('#autocomplete')).blur();
+        angular.element(document.querySelector('#autocompleteRules')).blur();
         if(search.startsWith('group:') && search.split('group:')[1].trim()) {
             $scope.rules.addFilter('group',search.split('group:')[1].trim());
         } else if(search.startsWith('level:') && search.split('level:')[1].trim()) {
@@ -90,7 +90,7 @@ app.controller('rulesetController', function($scope, $rootScope, $sce, Rules, Ru
      */
     $scope.checkEnterDecoders = search => {
         $scope.searchTerm = '';
-        angular.element(document.querySelector('#autocomplete')).blur();
+        angular.element(document.querySelector('#autocompleteDecoders')).blur();
         if(search.startsWith('path:') && search.split('path:')[1].trim()) {
             $scope.decoders.addFilter('path',search.split('path:')[1].trim());
         } else if(search.startsWith('file:') && search.split('file:')[1].trim()) {
